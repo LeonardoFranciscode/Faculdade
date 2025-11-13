@@ -49,6 +49,7 @@ int main () {
         printf("[0] Sair do Programa\n");
         printf("Escolha um opcao >>> ");
         scanf("%d", &opcao);
+        getchar();
 
         switch (opcao) {
             case 1:
@@ -69,7 +70,6 @@ int main () {
         }
     } while (opcao != 0);
 
-    liberarListaEncadeada(&ListaEncadeada, *lista);
 
     printf("Programa encerrado.\n");
 
@@ -79,6 +79,9 @@ int main () {
 
 //IMPLEMENTAÇÃO DAS FUNÇOES DE MENU
 void menuListaEstatica(){
+    ListaEstatica lista;
+    inicializarListaEstatica(&lista);
+
     int opc;
     do {
         printf("\n\n--- Menu Lista Estática ---\n");
@@ -88,24 +91,31 @@ void menuListaEstatica(){
         printf("[0] - Voltar ao menu principal\n");
         printf(">>>");
         scanf("%d", &opc);
+        getchar();
 
         switch (opc){
-            case 1:
-                char *item[];
+            case 1: {
+                char item[MAX_STR_LEN];
                 printf("Insira o nome do item: ");
-                scanf("%s", item);
-                inserirListaEstatica(&ListaEstatica *lista, *item);
+                fgets(item, MAX_STR_LEN, stdin);
+                item[strcspn(item, "\n")] = '\0'; // remove o \n que o fgets adiciona
+
+                inserirListaEstatica(&lista, item);
                 break;
+            }
             
-            case 2:
-                char *item[];
+            case 2: {
+                char item[MAX_STR_LEN];
                 printf("Digite o nome do item a ser removido: ");
-                scanf("%s", item);
-                removerListaEstatica(&ListaEstatica *lista, *item);
+                fgets(item, MAX_STR_LEN, stdin);
+                item[strcspn(item, "\n")] = '\0'; // remove o \n que o fgets adiciona
+
+                removerListaEstatica(&lista, item);
                 break;
+            }
 
             case 3:
-                listarListaEstatica(&ListaEstatica *lista);
+                listarListaEstatica(&lista);
                 break;
 
             case 0:
@@ -122,6 +132,8 @@ void menuListaEstatica(){
 
 
 void menuListaEncadeada(){
+    ListaEncadeada lista;
+    inicializarListaEncadeada(&lista);
     int opc;
     do {
         printf("\n\n--- Menu Lista Encadeada ---\n\n");
@@ -131,24 +143,31 @@ void menuListaEncadeada(){
         printf("[0] - Voltar ao menu principal\n");
         printf(">>>");
         scanf("%d", &opc);
+        getchar();
 
         switch (opc){
-            case 1:
-                char *item[];
+            case 1: {
+                char item[MAX_STR_LEN];
                 printf("Digite o nome do item: ");
-                scanf("%s", item);
-                inserirListaEncadeada(ListaEncadeada *lista, *item);
+                fgets(item, MAX_STR_LEN, stdin);
+                item[strcspn(item, "\n")] = '\0'; // remove o \n que o fgets adiciona
+
+                inserirListaEncadeada(&lista, item);
                 break;
+            }
             
-            case 2:
-                char *item[];
+            case 2: {
+                char item[MAX_STR_LEN];
                 printf("Digite o nome do item a ser removido: ");
-                scanf("%s", item);
-                removerListaEncadeada(&ListaEncadeada *lista, *item);
+                fgets(item, MAX_STR_LEN, stdin);
+                item[strcspn(item, "\n")] = '\0'; // remove o \n que o fgets adiciona
+
+                removerListaEncadeada(&lista, item);
                 break;
+            }
 
             case 3:
-                listarListaEncadeada(ListaEncadeada *lista);
+                listarListaEncadeada(&lista);
                 break;
 
             case 0:
@@ -200,7 +219,7 @@ void removerListaEstatica(ListaEstatica *lista, const char *texto) {
     }
 
     lista->quantidade--;
-    printf("Item \"%s\" removido com sucesso.\n");
+    printf("Item \"%s\" removido com sucesso.\n", texto);
 }
 
 
@@ -252,7 +271,7 @@ void removerListaEncadeada(ListaEncadeada *lista, const char* texto){
 
     while (atual != NULL && strcmp(atual->dado, texto) != 0){
         anterior = atual;
-        atual = atual->próximo;
+        atual = atual->proximo;
     }
 
     if (atual == NULL){
@@ -268,13 +287,13 @@ void removerListaEncadeada(ListaEncadeada *lista, const char* texto){
     //Liberar a memória
     free(atual->dado);
     free(atual);
-    printf("Texto \"%s\" removido com sucesso.\n");
+    printf("Texto \"%s\" removido com sucesso.\n", texto);
 }
 
 
 void listarListaEncadeada(const ListaEncadeada *lista){
-    No *temp = lista;
-    if (temp = NULL) {
+    No *temp = *lista;
+    if (temp == NULL) {
         printf("A lista encadeada está vazia.\n");
         return;
     }
@@ -292,6 +311,8 @@ void liberarListaEncadeada(ListaEncadeada *lista){
         proximo = atual->proximo;
         free(atual->dado); //Libera a string
         free(atual); //Libera Nó
+        atual = proximo;
     }
+    *lista = NULL;
     printf("Memória liberada com sucesso.\n");
 }
